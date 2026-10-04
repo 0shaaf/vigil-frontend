@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="100%" height="100%">
+  <defs>
+    <!-- Left and Right split masks/clips to ensure zero subpixel rendering gap -->
+    <clipPath id="split-left">
+      <rect x="0" y="0" width="500.5" height="1000" />
+    </clipPath>
+    <clipPath id="split-right">
+      <rect x="499.5" y="0" width="500.5" height="1000" />
+    </clipPath>
+  </defs>
+
+  <!-- ==================== BACKGROUND ==================== -->
+  <rect width="1000" height="1000" fill="#ffffff" />
+
+  <!-- ==================== 1. SHIELD FRAME ==================== -->
+  <!-- Top Arched Crest (Left Half - Charcoal Black) -->
+  <path d="M 500,42 
+           C 375,42 278,130 228,252 
+           L 282,274 
+           C 324,175 404,102 500,102 
+           Z" 
+        fill="#1a1a1a" />
+
+  <!-- Top Arched Crest (Right Half - Rust Orange) -->
+  <path d="M 500,42 
+           C 625,42 722,130 772,252 
+           L 718,274 
+           C 676,175 596,102 500,102 
+           Z" 
+        fill="#ba4825" />
+
+  <!-- Main Left Diagonal Border (Top to Mid-Crest) -->
+  <polygon points="228,252 282,274 382,500 334,500" fill="#1a1a1a" />
+
+  <!-- Lower Left Diagonal Frame & Offset Accent Stripe -->
+  <!-- Inner Left Rail -->
+  <polygon points="348,515 390,515 480,720 448,734" fill="#1a1a1a" />
+  
+  <!-- Outer Left Accent Stripe (Starts at horizontal notch, runs to bottom apex) -->
+  <polygon points="242,472 296,472 500,838 500,780 348,515 320,515" fill="#1a1a1a" />
+
+  <!-- Right Shield Diagonal Frame (Runs from Arch Corner to Bottom Apex) -->
+  <polygon points="772,252 718,274 466,738 500,780 500,838 726,472" fill="#ba4825" />
+
+  <!-- Upper Right Accent Stripe (Offset wing terminating at horizontal notch) -->
+  <polygon points="772,252 748,300 748,468 702,468 740,320 726,275" fill="#ba4825" />
+  <polygon points="772,252 726,275 744,380 748,468 720,468 678,350 718,274" fill="#ba4825" />
+
+  <!-- ==================== 2. DETECTIVE (BODY & COAT) ==================== -->
+  <!-- Left Coat & Lapel (Black Silhouette) -->
+  <path d="M 500,440
+           L 448,440
+           L 412,448
+           L 366,436
+           L 348,442
+           L 358,492
+           L 342,504
+           L 384,595
+           L 438,662
+           L 500,705
+           Z" 
+        fill="#1a1a1a" />
+
+  <!-- Right Coat & Lapel (Rust Orange Silhouette) -->
+  <path d="M 500,440
+           L 500,705
+           L 522,645
+           L 508,610
+           L 538,554
+           L 488,542
+           L 480,512
+           L 462,490
+           L 500,460
+           Z" 
+        fill="#ba4825" />
+
+  <!-- Coat Lapel Creases & Folds (White Linework) -->
+  <path d="M 366,436 L 412,478 L 444,570" 
+        fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M 358,492 L 412,478" 
+        fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+  <path d="M 444,570 L 418,630" 
+        fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" />
+  <path d="M 508,610 L 468,540 L 488,542" 
+        fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- ==================== 3. DETECTIVE (HEAD & SHADOW) ==================== -->
+  <!-- Left Head & Neck Silhouette (Black) -->
+  <path d="M 500,320 
+           L 370,320 
+           C 362,350 364,395 372,440 
+           L 440,440 
+           L 500,380 
+           Z" 
+        fill="#1a1a1a" />
+
+  <!-- Ear Linework on Dark Silhouette (White) -->
+  <path d="M 404,360 
+           C 388,360 384,374 386,394 
+           C 388,410 398,422 410,422 
+           C 418,422 424,414 424,402" 
+        fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" />
+  <path d="M 398,378 
+           C 394,386 396,398 404,402 
+           C 408,404 412,398 412,392" 
+        fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" />
+
+  <!-- Eye Shadow under Fedora Brim (Right Half - Rust Orange) -->
+  <path d="M 500,325 
+           L 582,388 
+           C 552,380 522,385 500,380 
+           Z" 
+        fill="#ba4825" />
+  <polygon points="500,325 582,388 522,408 500,380" fill="#ba4825" />
+
+  <!-- Profile Features: Nose, Lips, Chin & Jawline (Rust Orange Linework) -->
+  <path d="M 522,405 
+           L 528,454 
+           C 528,458 524,462 516,464 
+           C 506,466 498,467 492,472 
+           C 488,475 492,478 496,480 
+           C 486,482 482,488 488,494 
+           C 480,498 480,504 488,514 
+           C 496,524 492,530 478,536 
+           C 464,542 448,518 440,500" 
+        fill="none" stroke="#ba4825" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- ==================== 4. FEDORA HAT ==================== -->
+  <!-- Crown (Left Half - Black) -->
+  <path d="M 500,194 
+           C 460,188 420,185 396,278 
+           L 500,285 
+           Z" 
+        fill="#1a1a1a" />
+
+  <!-- Crown (Right Half - Rust Orange) -->
+  <path d="M 500,194 
+           C 518,198 528,212 534,242 
+           C 538,260 536,285 536,308 
+           L 500,285 
+           Z" 
+        fill="#ba4825" />
+
+  <!-- Hatband (Counter-changed: Orange on Left, Black on Right) -->
+  <path d="M 500,285 
+           L 394,278 
+           L 374,316 
+           L 500,325 
+           Z" 
+        fill="#ba4825" />
+  <path d="M 500,285 
+           L 536,308 
+           L 538,342 
+           L 500,325 
+           Z" 
+        fill="#1a1a1a" />
+
+  <!-- Brim (Left Half - Black) -->
+  <path d="M 500,325 
+           L 374,316 
+           L 315,274 
+           C 345,302 420,332 500,325 
+           Z" 
+        fill="#1a1a1a" />
+
+  <!-- Brim (Right Half - Rust Orange) -->
+  <path d="M 500,325 
+           C 525,326 555,340 584,390 
+           C 555,372 525,355 500,325 
+           Z" 
+        fill="#ba4825" />
+
+  <!-- Vertical Divider Seam -->
+  <line x1="500" y1="42" x2="500" y2="838" stroke="#ffffff" stroke-width="1.5" opacity="0.3" />
+</svg>
