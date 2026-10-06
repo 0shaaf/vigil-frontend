@@ -8,19 +8,17 @@ export default function BusinessSection() {
     <section id="business" className="relative py-20 sm:py-28 bg-[#07070a] text-white border-t border-white/10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-16 items-center">
-          {/* Left Column: Specially Designed Illustration (Large & Responsive) */}
+          {/* Left Column: Specially Designed Illustration (Submerged Naturally) */}
           <div className="lg:col-span-7 flex justify-center items-center w-full">
-            <div className="relative w-full aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#07070a] shadow-2xl shadow-black/80 group">
+            <div className="relative w-full aspect-[1024/572]">
               <Image
                 src="/assets/sec4.jpeg"
                 alt="Founder and corporate custodians continuity illustration"
                 fill
                 priority
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 58vw"
-                className="object-cover object-center filter contrast-[1.02] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                className="object-contain object-center select-none"
               />
-              {/* Subtle glass rim overlay to submerge cleanly into theme */}
-              <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-1 ring-inset ring-white/10 pointer-events-none" />
             </div>
           </div>
 
