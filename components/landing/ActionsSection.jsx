@@ -42,16 +42,25 @@ export default function ActionsSection() {
   const sectionRef = useRef(null);
   const gridRef = useRef(null);
   const cardRefs = useRef([]);
-  const [offsets, setOffsets] = useState([]);
-  const [animationPhase, setAnimationPhase] = useState("offscreen"); // "offscreen" | "stacked" | "dispersed"
-  const [isFullySettled, setIsFullySettled] = useState(false);
+  const activeAnimationsRef = useRef([]);
   const [isHeaderVisible, setIsHeaderVisible] = useState(false);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
-  const stackTimeoutRef = useRef(null);
-  const settleTimeoutRef = useRef(null);
+  // Stop and cancel any running card animations
+  const stopAllAnimations = () => {
+    activeAnimationsRef.current.forEach((anim) => {
+      try {
+        anim.cancel();
+      } catch (e) {}
+    });
+    activeAnimationsRef.current = [];
+  };
 
-  // Compute relative layout coordinates from each card to Card 0
-  const updateOffsets = () => {
+  // Reset all cards to their initial offscreen stack coordinates
+  const resetToOffscreen = () => {
+    stopAllAnimations();
+    setIsAnimationComplete(false);
+
     if (!gridRef.current || cardRefs.current.length < 4) return;
     const card0 = cardRefs.current[0];
     if (!card0) return;
@@ -60,21 +69,128 @@ export default function ActionsSection() {
     const card0Top = card0.offsetTop;
     const offscreenShift = -(typeof window !== "undefined" ? window.innerWidth + 400 : 1600);
 
-    const calculated = cardRefs.current.map((card) => {
-      if (!card) return { dx: 0, dy: 0, offscreenShift };
-      return {
-        dx: card0Left - card.offsetLeft,
-        dy: card0Top - card.offsetTop,
-        offscreenShift,
-      };
+    cardRefs.current.forEach((card, idx) => {
+      if (!card) return;
+      const dx = card0Left - card.offsetLeft;
+      const dy = card0Top - card.offsetTop;
+      card.style.transform = `translate3d(${dx + offscreenShift}px, ${dy}px, 0px)`;
+      card.style.opacity = "0";
+      card.style.zIndex = `${40 - idx * 10}`;
     });
-    setOffsets(calculated);
+  };
+
+  // Play continuous, unified hardware-accelerated animation without any jump or jerk
+  const playContinuousCardAnimation = () => {
+    if (!gridRef.current || cardRefs.current.length < 4) return;
+    const card0 = cardRefs.current[0];
+    if (!card0) return;
+
+    stopAllAnimations();
+    setIsAnimationComplete(false);
+
+    const card0Left = card0.offsetLeft;
+    const card0Top = card0.offsetTop;
+    const offscreenShift = -(window.innerWidth + 400);
+    const duration = 2000; // Continuous total duration
+
+    cardRefs.current.forEach((card, idx) => {
+      if (!card) return;
+
+      const dx = card0Left - card.offsetLeft;
+      const dy = card0Top - card.offsetTop;
+      const zIndex = 40 - idx * 10;
+      card.style.zIndex = `${zIndex}`;
+
+      let keyframes = [];
+
+      if (idx === 0) {
+        // Card 0: Slides in together with stack, settles in slot 0, remains anchored
+        keyframes = [
+          {
+            transform: `translate3d(${offscreenShift}px, 0px, 0px)`,
+            opacity: 0,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            offset: 0,
+          },
+          {
+            transform: "translate3d(0px, 0px, 0px)",
+            opacity: 1,
+            offset: 0.44,
+          },
+          {
+            transform: "translate3d(0px, 0px, 0px)",
+            opacity: 1,
+            offset: 1,
+          },
+        ];
+      } else {
+        // Cards 1-3: Aligned perfectly beneath Card 0 as one single card,
+        // then smoothly peel off and disperse with staggered continuous timing
+        const disperseStart = 0.46 + idx * 0.05; // 0.51, 0.56, 0.61
+        const disperseEnd = Math.min(0.80 + idx * 0.06, 1.0); // 0.86, 0.92, 0.98
+
+        keyframes = [
+          {
+            transform: `translate3d(${dx + offscreenShift}px, ${dy}px, 0px)`,
+            opacity: 0,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            offset: 0,
+          },
+          {
+            transform: `translate3d(${dx}px, ${dy}px, 0px)`,
+            opacity: 1,
+            easing: "ease-in-out",
+            offset: 0.44,
+          },
+          {
+            transform: `translate3d(${dx}px, ${dy}px, 0px)`,
+            opacity: 1,
+            easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+            offset: disperseStart,
+          },
+          {
+            transform: "translate3d(0px, 0px, 0px)",
+            opacity: 1,
+            offset: disperseEnd,
+          },
+          {
+            transform: "translate3d(0px, 0px, 0px)",
+            opacity: 1,
+            offset: 1,
+          },
+        ];
+      }
+
+      const anim = card.animate(keyframes, {
+        duration,
+        fill: "forwards",
+      });
+
+      activeAnimationsRef.current.push(anim);
+
+      if (idx === 3) {
+        anim.onfinish = () => {
+          // Clear styles so normal hover and interactions work with zero interference
+          cardRefs.current.forEach((c) => {
+            if (c) {
+              c.style.transform = "";
+              c.style.opacity = "";
+              c.style.zIndex = "";
+            }
+          });
+          setIsAnimationComplete(true);
+        };
+      }
+    });
   };
 
   useEffect(() => {
-    updateOffsets();
-    window.addEventListener("resize", updateOffsets);
-    return () => window.removeEventListener("resize", updateOffsets);
+    resetToOffscreen();
+    const handleResize = () => {
+      if (!isAnimationComplete) resetToOffscreen();
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -82,36 +198,14 @@ export default function ActionsSection() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsHeaderVisible(true);
-          updateOffsets();
-
-          if (stackTimeoutRef.current) clearTimeout(stackTimeoutRef.current);
-          if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
-
-          setIsFullySettled(false);
-          setAnimationPhase("offscreen");
-
-          // Double rAF ensures offscreen state is committed before beginning translation
           requestAnimationFrame(() => {
             requestAnimationFrame(() => {
-              setAnimationPhase("stacked");
-
-              // After arriving and pausing as a stack, disperse cards to their grid positions
-              stackTimeoutRef.current = setTimeout(() => {
-                setAnimationPhase("dispersed");
-
-                settleTimeoutRef.current = setTimeout(() => {
-                  setIsFullySettled(true);
-                }, 1200);
-              }, 950);
+              playContinuousCardAnimation();
             });
           });
         } else {
-          // Reset when scrolling away
           setIsHeaderVisible(false);
-          setIsFullySettled(false);
-          setAnimationPhase("offscreen");
-          if (stackTimeoutRef.current) clearTimeout(stackTimeoutRef.current);
-          if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
+          resetToOffscreen();
         }
       },
       {
@@ -121,60 +215,13 @@ export default function ActionsSection() {
     );
 
     const currentEl = sectionRef.current;
-    if (currentEl) {
-      observer.observe(currentEl);
-    }
+    if (currentEl) observer.observe(currentEl);
 
     return () => {
       if (currentEl) observer.unobserve(currentEl);
-      if (stackTimeoutRef.current) clearTimeout(stackTimeoutRef.current);
-      if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
+      stopAllAnimations();
     };
   }, []);
-
-  const getCardStyle = (idx) => {
-    if (isFullySettled) {
-      return {};
-    }
-
-    if (offsets.length < 4) {
-      return { opacity: 0 };
-    }
-
-    const offset = offsets[idx] || { dx: 0, dy: 0, offscreenShift: -1600 };
-    const rotations = [0, 2, -2.5, 3];
-    const zIndices = [40, 30, 20, 10];
-
-    if (animationPhase === "offscreen") {
-      return {
-        transform: `translate3d(${offset.dx + offset.offscreenShift}px, ${offset.dy}px, 0px) rotate(${rotations[idx]}deg)`,
-        opacity: 0,
-        zIndex: zIndices[idx],
-        transition: "none",
-        willChange: "transform, opacity",
-      };
-    }
-
-    if (animationPhase === "stacked") {
-      return {
-        transform: `translate3d(${offset.dx}px, ${offset.dy}px, 0px) rotate(${rotations[idx]}deg)`,
-        opacity: 1,
-        zIndex: zIndices[idx],
-        transition: "transform 800ms cubic-bezier(0.16, 1, 0.3, 1), opacity 400ms ease-out",
-        willChange: "transform, opacity",
-      };
-    }
-
-    // "dispersed": Card 0 stays in place while Cards 1-3 translate to their slots with staggered delays
-    const delay = idx * 120;
-    return {
-      transform: "translate3d(0px, 0px, 0px) rotate(0deg)",
-      opacity: 1,
-      zIndex: 1,
-      transition: `transform 750ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, opacity 400ms ease-out`,
-      willChange: "transform, opacity",
-    };
-  };
 
   return (
     <section
@@ -198,7 +245,7 @@ export default function ActionsSection() {
           </p>
         </div>
 
-        {/* 4 Action Cards: Stack in from left offscreen, then disperse across grid */}
+        {/* 4 Action Cards: Stack in from left as a single card, then smoothly disperse across grid */}
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
           {ACTIONS.map((action, idx) => {
             const Icon = action.icon;
@@ -208,8 +255,7 @@ export default function ActionsSection() {
                 ref={(el) => {
                   cardRefs.current[idx] = el;
                 }}
-                style={getCardStyle(idx)}
-                className="p-6 rounded-3xl bg-white text-black border-2 border-black flex flex-col justify-between shadow-sm transition-shadow duration-300 hover:shadow-md"
+                className="p-6 rounded-3xl bg-white text-black border-2 border-black flex flex-col justify-between h-full min-h-[340px] shadow-sm hover:shadow-md transition-shadow duration-300 will-change-transform"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
