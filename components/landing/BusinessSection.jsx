@@ -15,41 +15,41 @@ export default function BusinessSection() {
   };
 
   return (
-    <section id="business" className="relative py-28 sm:py-36 bg-[#07070a] text-white border-t border-white/10 overflow-hidden">
+    <section id="business" className="relative py-24 sm:py-28 lg:py-32 bg-[#07070a] text-white border-t border-white/10 overflow-hidden">
       {/* Subtle ambient abyss glow */}
       <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[#ff3b19]/8 rounded-full blur-[180px] pointer-events-none" />
 
       {/* Main Content Layout */}
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 xl:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20 xl:gap-28 items-center">
           
-          {/* Left Area: Problem Statement, Description, Shiny Glass Cards & CTA */}
-          <div className="lg:col-span-6 flex flex-col justify-center text-left">
+          {/* Left Area: Problem Statement, Description, Compact Shiny Glass Cards & CTA */}
+          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-center text-left">
             <h2 className="font-['Space_Grotesk'] text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
               What happens to your business <br />
               <span className="text-[#ff3b19]">AFTER YOU?</span>
             </h2>
 
-            <p className="mt-6 text-base sm:text-lg text-white/75 font-normal leading-relaxed">
+            <p className="mt-5 text-sm sm:text-base text-white/75 font-normal leading-relaxed">
               Founders and key executives are often the sole custodians of essential corporate intelligence: bank signing powers, cloud root keys, cap table records, and emergency handover directives. If an unforeseen accident occurs, companies freeze.
             </p>
 
-            {/* Safeguard Feature Cards - Glassmorphically identical to Section 2 */}
-            <div className="mt-10 space-y-6">
+            {/* Safeguard Feature Cards - Half size & Summarized */}
+            <div className="mt-7 space-y-3 sm:space-y-3.5">
               <div
                 onMouseMove={handleCardMouseMove}
-                className="group/card relative shiny-glass-card rounded-2xl p-7 sm:p-8 transition-all"
+                className="group/card relative shiny-glass-card rounded-xl p-4 sm:p-4.5 transition-all"
               >
-                <div className="flex items-start gap-5 sm:gap-6">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#ff3b19]/15 border border-[#ff3b19]/30 text-[#ff3b19] flex items-center justify-center shrink-0 transition-transform duration-500 group-hover/card:scale-105 shadow-[0_0_25px_rgba(255,59,25,0.15)]">
-                    <FolderLock size={24} className="text-[#ff3b19]" />
+                <div className="flex items-start gap-3.5 sm:gap-4">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#ff3b19]/15 border border-[#ff3b19]/30 text-[#ff3b19] flex items-center justify-center shrink-0 transition-transform duration-500 group-hover/card:scale-105 shadow-[0_0_15px_rgba(255,59,25,0.15)]">
+                    <FolderLock size={18} className="text-[#ff3b19]" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-base sm:text-lg font-semibold text-white tracking-tight">
-                      Automated Drive &amp; Document Release
+                    <h4 className="text-sm sm:text-base font-semibold text-white tracking-tight">
+                      Automated Vault Release
                     </h4>
-                    <p className="text-xs sm:text-sm text-white/70 mt-1.5 leading-relaxed">
-                      Store sensitive files in your Google Drive or secure vault. Vigil only shares access with your co-founders if you fail to check in.
+                    <p className="text-xs text-white/70 mt-0.5 leading-relaxed">
+                      Sensitive files auto-shared with co-founders only if you fail to check in.
                     </p>
                   </div>
                 </div>
@@ -57,18 +57,18 @@ export default function BusinessSection() {
 
               <div
                 onMouseMove={handleCardMouseMove}
-                className="group/card relative shiny-glass-card rounded-2xl p-7 sm:p-8 transition-all"
+                className="group/card relative shiny-glass-card rounded-xl p-4 sm:p-4.5 transition-all"
               >
-                <div className="flex items-start gap-5 sm:gap-6">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#ff3b19]/15 border border-[#ff3b19]/30 text-[#ff3b19] flex items-center justify-center shrink-0 transition-transform duration-500 group-hover/card:scale-105 shadow-[0_0_25px_rgba(255,59,25,0.15)]">
-                    <Users size={24} className="text-[#ff3b19]" />
+                <div className="flex items-start gap-3.5 sm:gap-4">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#ff3b19]/15 border border-[#ff3b19]/30 text-[#ff3b19] flex items-center justify-center shrink-0 transition-transform duration-500 group-hover/card:scale-105 shadow-[0_0_15px_rgba(255,59,25,0.15)]">
+                    <Users size={18} className="text-[#ff3b19]" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-base sm:text-lg font-semibold text-white tracking-tight">
-                      Tiered Recipient Routing
+                    <h4 className="text-sm sm:text-base font-semibold text-white tracking-tight">
+                      Tiered Key Routing
                     </h4>
-                    <p className="text-xs sm:text-sm text-white/70 mt-1.5 leading-relaxed">
-                      Deliver technical passwords to the CTO, legal agreements to corporate counsel, and financial keys strictly to the Board.
+                    <p className="text-xs text-white/70 mt-0.5 leading-relaxed">
+                      Route root credentials to your CTO, legal to counsel, and banking to the Board.
                     </p>
                   </div>
                 </div>
@@ -76,28 +76,28 @@ export default function BusinessSection() {
             </div>
 
             {/* Action Link */}
-            <div className="mt-10">
+            <div className="mt-8">
               <a
                 href="#actions"
-                className="group inline-flex items-center gap-3 text-sm sm:text-base font-semibold text-[#ff3b19] hover:text-[#ff5233] transition-colors"
+                className="group inline-flex items-center gap-3 text-sm font-semibold text-[#ff3b19] hover:text-[#ff5233] transition-colors"
               >
                 <span>Safeguard your business continuity</span>
-                <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1.5" />
+                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1.5" />
               </a>
             </div>
           </div>
 
-          {/* Right Area: Large Crisp Image Spanning the Right Half with Left Origin */}
-          <div className="lg:col-span-6 flex items-center justify-start w-full">
-            <div className="relative w-full aspect-[1024/572] lg:scale-105 xl:scale-115 origin-left">
+          {/* Right Area: Spanning 70-80% Section Height with Left Origin & Excess Cut Off Screen Edge */}
+          <div className="lg:col-span-7 xl:col-span-7 relative flex items-center justify-start w-full">
+            <div className="relative w-full lg:w-[130%] xl:w-[145%] max-w-none h-[340px] sm:h-[420px] lg:h-[500px] xl:h-[560px] origin-left">
               <Image
                 src="/assets/sec4.jpeg"
                 alt="Founder and corporate custodians continuity"
                 fill
                 priority
                 unoptimized
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-contain object-left pointer-events-none select-none"
+                sizes="(max-width: 1024px) 100vw, 60vw"
+                className="object-cover object-left pointer-events-none select-none"
               />
             </div>
           </div>
