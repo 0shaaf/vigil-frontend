@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { BellRing, FileKey2, ShieldBan, Mail, ArrowRight, CheckCircle2 } from "lucide-react";
 
 const ACTIONS = [
@@ -38,17 +39,156 @@ const ACTIONS = [
 ];
 
 export default function ActionsSection() {
+  const sectionRef = useRef(null);
+  const gridRef = useRef(null);
+  const cardRefs = useRef([]);
+  const [offsets, setOffsets] = useState([]);
+  const [animationPhase, setAnimationPhase] = useState("offscreen"); // "offscreen" | "stacked" | "dispersed"
+  const [isFullySettled, setIsFullySettled] = useState(false);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(false);
+
+  const stackTimeoutRef = useRef(null);
+  const settleTimeoutRef = useRef(null);
+
+  // Compute relative layout coordinates from each card to Card 0
+  const updateOffsets = () => {
+    if (!gridRef.current || cardRefs.current.length < 4) return;
+    const card0 = cardRefs.current[0];
+    if (!card0) return;
+
+    const card0Left = card0.offsetLeft;
+    const card0Top = card0.offsetTop;
+    const offscreenShift = -(typeof window !== "undefined" ? window.innerWidth + 400 : 1600);
+
+    const calculated = cardRefs.current.map((card) => {
+      if (!card) return { dx: 0, dy: 0, offscreenShift };
+      return {
+        dx: card0Left - card.offsetLeft,
+        dy: card0Top - card.offsetTop,
+        offscreenShift,
+      };
+    });
+    setOffsets(calculated);
+  };
+
+  useEffect(() => {
+    updateOffsets();
+    window.addEventListener("resize", updateOffsets);
+    return () => window.removeEventListener("resize", updateOffsets);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsHeaderVisible(true);
+          updateOffsets();
+
+          if (stackTimeoutRef.current) clearTimeout(stackTimeoutRef.current);
+          if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
+
+          setIsFullySettled(false);
+          setAnimationPhase("offscreen");
+
+          // Double rAF ensures offscreen state is committed before beginning translation
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              setAnimationPhase("stacked");
+
+              // After arriving and pausing as a stack, disperse cards to their grid positions
+              stackTimeoutRef.current = setTimeout(() => {
+                setAnimationPhase("dispersed");
+
+                settleTimeoutRef.current = setTimeout(() => {
+                  setIsFullySettled(true);
+                }, 1200);
+              }, 950);
+            });
+          });
+        } else {
+          // Reset when scrolling away
+          setIsHeaderVisible(false);
+          setIsFullySettled(false);
+          setAnimationPhase("offscreen");
+          if (stackTimeoutRef.current) clearTimeout(stackTimeoutRef.current);
+          if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
+        }
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "-20px 0px -20px 0px",
+      }
+    );
+
+    const currentEl = sectionRef.current;
+    if (currentEl) {
+      observer.observe(currentEl);
+    }
+
+    return () => {
+      if (currentEl) observer.unobserve(currentEl);
+      if (stackTimeoutRef.current) clearTimeout(stackTimeoutRef.current);
+      if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
+    };
+  }, []);
+
+  const getCardStyle = (idx) => {
+    if (isFullySettled) {
+      return {};
+    }
+
+    if (offsets.length < 4) {
+      return { opacity: 0 };
+    }
+
+    const offset = offsets[idx] || { dx: 0, dy: 0, offscreenShift: -1600 };
+    const rotations = [0, 2, -2.5, 3];
+    const zIndices = [40, 30, 20, 10];
+
+    if (animationPhase === "offscreen") {
+      return {
+        transform: `translate3d(${offset.dx + offset.offscreenShift}px, ${offset.dy}px, 0px) rotate(${rotations[idx]}deg)`,
+        opacity: 0,
+        zIndex: zIndices[idx],
+        transition: "none",
+        willChange: "transform, opacity",
+      };
+    }
+
+    if (animationPhase === "stacked") {
+      return {
+        transform: `translate3d(${offset.dx}px, ${offset.dy}px, 0px) rotate(${rotations[idx]}deg)`,
+        opacity: 1,
+        zIndex: zIndices[idx],
+        transition: "transform 800ms cubic-bezier(0.16, 1, 0.3, 1), opacity 400ms ease-out",
+        willChange: "transform, opacity",
+      };
+    }
+
+    // "dispersed": Card 0 stays in place while Cards 1-3 translate to their slots with staggered delays
+    const delay = idx * 120;
+    return {
+      transform: "translate3d(0px, 0px, 0px) rotate(0deg)",
+      opacity: 1,
+      zIndex: 1,
+      transition: `transform 750ms cubic-bezier(0.16, 1, 0.3, 1) ${delay}ms, opacity 400ms ease-out`,
+      willChange: "transform, opacity",
+    };
+  };
+
   return (
-    <section id="actions" className="relative py-28 bg-white text-black border-t-2 border-black">
+    <section
+      id="actions"
+      ref={sectionRef}
+      className="relative py-28 bg-white text-black border-t-2 border-black overflow-hidden"
+    >
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 mb-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ff3b19]" />
-            <span className="text-xs font-bold uppercase tracking-widest text-[#ff3b19]">
-              04 // Built for Everyone
-            </span>
-          </div>
+        {/* Section Header with smooth fade-in animation */}
+        <div
+          className={`text-center max-w-3xl mx-auto mb-16 transition-opacity duration-1000 ease-out ${
+            isHeaderVisible ? "opacity-100" : "opacity-0"
+          }`}
+        >
           <h2 className="font-['Space_Grotesk'] text-3xl sm:text-5xl font-bold tracking-tight text-black uppercase leading-tight">
             When you go silent, <br />
             <span className="text-[#ff3b19]">Vigil executes your chosen actions.</span>
@@ -58,14 +198,18 @@ export default function ActionsSection() {
           </p>
         </div>
 
-        {/* 4 Clean Action Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* 4 Action Cards: Stack in from left offscreen, then disperse across grid */}
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
           {ACTIONS.map((action, idx) => {
             const Icon = action.icon;
             return (
               <div
                 key={idx}
-                className="p-6 rounded-3xl bg-white text-black border-2 border-black flex flex-col justify-between"
+                ref={(el) => {
+                  cardRefs.current[idx] = el;
+                }}
+                style={getCardStyle(idx)}
+                className="p-6 rounded-3xl bg-white text-black border-2 border-black flex flex-col justify-between shadow-sm transition-shadow duration-300 hover:shadow-md"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
@@ -126,3 +270,4 @@ export default function ActionsSection() {
     </section>
   );
 }
+
