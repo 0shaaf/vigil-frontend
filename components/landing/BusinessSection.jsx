@@ -1,33 +1,42 @@
 "use client";
 
 import Image from "next/image";
-import { KeyRound, Users, ShieldAlert, ArrowRight, FolderLock, FileCheck } from "lucide-react";
+import { Users, ArrowRight, FolderLock } from "lucide-react";
 
 export default function BusinessSection() {
   return (
-    <section id="business" className="relative py-28 bg-[#07070a] text-white border-t border-white/10">
+    <section id="business" className="relative py-20 sm:py-28 bg-[#07070a] text-white border-t border-white/10 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Left Column: Problem + Solution */}
-          <div className="lg:col-span-6 flex flex-col justify-center text-left">
-            <div className="inline-flex items-center gap-2 mb-4">
-              <span className="w-2 h-2 rounded-full bg-[#ff3b19]" />
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#ff3b19]">
-                03 // Founders, Executives &amp; Custodians
-              </span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-16 items-center">
+          {/* Left Column: Specially Designed Illustration (Large & Responsive) */}
+          <div className="lg:col-span-7 flex justify-center items-center w-full">
+            <div className="relative w-full aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border border-white/10 bg-[#07070a] shadow-2xl shadow-black/80 group">
+              <Image
+                src="/assets/sec4.jpeg"
+                alt="Founder and corporate custodians continuity illustration"
+                fill
+                priority
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 58vw"
+                className="object-cover object-center filter contrast-[1.02] transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              />
+              {/* Subtle glass rim overlay to submerge cleanly into theme */}
+              <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-1 ring-inset ring-white/10 pointer-events-none" />
             </div>
+          </div>
 
-            <h2 className="font-['Space_Grotesk'] text-3xl sm:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
+          {/* Right Column: Problem + Solution Copy */}
+          <div className="lg:col-span-5 flex flex-col justify-center text-left">
+            <h2 className="font-['Space_Grotesk'] text-2xl sm:text-4xl lg:text-4xl xl:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
               The company&apos;s master keys live in your head. <br />
               <span className="text-[#ff3b19]">What if you vanish tomorrow?</span>
             </h2>
 
-            <p className="mt-6 text-base sm:text-lg text-white/70 font-normal leading-relaxed">
+            <p className="mt-5 sm:mt-6 text-sm sm:text-base lg:text-lg text-white/70 font-normal leading-relaxed">
               Founders and key executives are often the sole custodians of essential corporate intelligence: bank signing powers, cloud root keys, cap table records, and emergency handover directives. If an unforeseen accident occurs, companies freeze.
             </p>
 
-            <div className="mt-8 space-y-4">
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-start gap-4">
+            <div className="mt-7 sm:mt-8 space-y-4">
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-start gap-4 hover:border-white/20 transition-colors">
                 <div className="w-10 h-10 rounded-lg bg-[#ff3b19]/20 text-[#ff3b19] flex items-center justify-center shrink-0">
                   <FolderLock size={20} />
                 </div>
@@ -39,7 +48,7 @@ export default function BusinessSection() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-start gap-4">
+              <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-start gap-4 hover:border-white/20 transition-colors">
                 <div className="w-10 h-10 rounded-lg bg-[#ff3b19]/20 text-[#ff3b19] flex items-center justify-center shrink-0">
                   <Users size={20} />
                 </div>
@@ -52,7 +61,7 @@ export default function BusinessSection() {
               </div>
             </div>
 
-            <div className="mt-8">
+            <div className="mt-7 sm:mt-8">
               <a
                 href="#actions"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-[#ff3b19] hover:text-[#ff5233] transition-colors"
@@ -62,30 +71,9 @@ export default function BusinessSection() {
               </a>
             </div>
           </div>
-
-          {/* Right Column: Graphic Depiction */}
-          <div className="lg:col-span-6 flex justify-center">
-            <div className="relative w-full aspect-[16/10] sm:aspect-[16/10] rounded-2xl overflow-hidden border-2 border-white/15 bg-black">
-              <Image
-                src="/assets/executive-vault.jpg"
-                alt="Executive standing in front of a monolithic secure digital vault"
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover object-center filter contrast-105"
-              />
-
-              <div className="absolute bottom-4 left-4 right-4 p-4 rounded-xl bg-black/85 backdrop-blur-md border border-white/10">
-                <div className="text-[11px] font-semibold text-[#ff3b19] uppercase tracking-wider">
-                  Cryptographic Custody Escrow
-                </div>
-                <div className="text-xs text-white/80 font-medium mt-0.5">
-                  Your co-founders receive the keys only when emergency silence is verified.
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
   );
 }
+
