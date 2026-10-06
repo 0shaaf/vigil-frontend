@@ -13,11 +13,11 @@ import {
 } from "lucide-react";
 
 // Procedurally generate static interlocking chain links along a catenary curve
-function generateChainLinks(x1, y1, x2, y2, slack = 14) {
+function generateChainLinks(x1, y1, x2, y2, slack = 8) {
   const dx = x2 - x1;
   const dy = y2 - y1;
   const dist = Math.hypot(dx, dy);
-  const numLinks = Math.max(4, Math.floor(dist / 17));
+  const numLinks = Math.max(3, Math.floor(dist / 16));
   const links = [];
 
   const cx = Number(((x1 + x2) / 2).toFixed(1));
@@ -46,7 +46,7 @@ function generateChainLinks(x1, y1, x2, y2, slack = 14) {
   };
 }
 
-// Fixed coordinate layout ensuring ZERO chain overlaps between layers
+// CEO Apex Node
 const CEO_NODE = {
   id: "ceo",
   x: 270,
@@ -55,21 +55,40 @@ const CEO_NODE = {
   sub: "Master Custodian",
 };
 
-// Lengthened chains with non-overlapping radiating fan angles
+// Junction levels along the central spine chain
+const JUNCTIONS = [
+  { id: "j1", y: 165 },
+  { id: "j2", y: 285 },
+  { id: "j3", y: 405 },
+];
+
+// Dependent hanging nodes branching off the central spine at each junction
 const DEPENDENT_NODES = [
   {
     id: "secrets",
-    x: 65,
-    y: 230,
+    junctionY: 165,
+    x: 85,
+    y: 165,
     icon: KeyRound,
     title: "SECRETS",
     desc: "Cloud Root & Passwords",
-    slack: 12,
+    slack: 8,
+  },
+  {
+    id: "rivals",
+    junctionY: 165,
+    x: 455,
+    y: 165,
+    icon: Swords,
+    title: "RIVALS",
+    desc: "Hostile Takeovers",
+    slack: 8,
   },
   {
     id: "plans",
-    x: 226,
-    y: 260,
+    junctionY: 285,
+    x: 105,
+    y: 285,
     icon: Target,
     title: "PLANS",
     desc: "Roadmap & Cap Table",
@@ -77,51 +96,49 @@ const DEPENDENT_NODES = [
   },
   {
     id: "growth",
-    x: 314,
-    y: 260,
+    junctionY: 285,
+    x: 435,
+    y: 285,
     icon: TrendingUp,
     title: "GROWTH",
     desc: "Treasury & Valuation",
     slack: 8,
   },
   {
-    id: "rivals",
-    x: 475,
-    y: 230,
-    icon: Swords,
-    title: "RIVALS",
-    desc: "Hostile Takeovers",
-    slack: 12,
-  },
-  {
     id: "taxes",
-    x: 105,
-    y: 440,
+    junctionY: 405,
+    x: 125,
+    y: 405,
     icon: Receipt,
     title: "TAXES",
     desc: "IRS & Bank Signing",
-    slack: 16,
+    slack: 8,
   },
   {
     id: "contracts",
-    x: 435,
-    y: 440,
+    junctionY: 405,
+    x: 415,
+    y: 405,
     icon: FileSignature,
     title: "CONTRACTS",
     desc: "Legal IP Handover",
-    slack: 16,
+    slack: 8,
   },
 ];
 
-// Precompute static chains outside component to eliminate SSR/Client hydration variance
-const PRECOMPUTED_CHAINS = DEPENDENT_NODES.reduce((acc, node) => {
-  acc[node.id] = generateChainLinks(
-    CEO_NODE.x,
-    CEO_NODE.y + 24,
-    node.x,
-    node.y - 24,
-    node.slack
-  );
+// Precompute central spine chain from CEO base to terminal lock
+const PRECOMPUTED_SPINE = generateChainLinks(270, 74, 270, 465, 0);
+
+// Precompute branch chains from junction points on central spine out to each node
+const PRECOMPUTED_BRANCHES = DEPENDENT_NODES.reduce((acc, node) => {
+  const isLeft = node.x < 270;
+  const attachX = isLeft ? node.x + 26 : node.x - 26;
+
+  acc[node.id] = {
+    ...generateChainLinks(270, node.junctionY, attachX, node.y, node.slack),
+    // Full traversal path from CEO down the spine and branching to the node
+    fullPulsePath: `M 270 74 L 270 ${node.junctionY} Q ${((270 + attachX) / 2).toFixed(1)} ${(node.y + node.slack).toFixed(1)} ${attachX} ${node.y}`,
+  };
   return acc;
 }, {});
 
@@ -147,16 +164,83 @@ export default function CeoChainIllustration() {
           </filter>
         </defs>
 
-        {/* ================= CHAINS LAYER ================= */}
+        {/* ================= CENTRAL SPINE CHAIN ================= */}
+        <g className="transition-opacity duration-300">
+          {/* Guide line down the vertical spine */}
+          <line
+            x1="270"
+            y1="74"
+            x2="270"
+            y2="465"
+            stroke="rgba(255, 255, 255, 0.15)"
+            strokeWidth="1.2"
+            strokeDasharray="3 3"
+          />
+
+          {/* Spine 3D Interlocking Links */}
+          {PRECOMPUTED_SPINE.links.map((link, idx) => {
+            const isOdd = link.isOdd;
+            return (
+              <g
+                key={`spine-link-${idx}`}
+                transform={`translate(${link.x}, ${link.y}) rotate(${link.angle})`}
+              >
+                {isOdd ? (
+                  <rect
+                    x="-4.5"
+                    y="-8"
+                    width="9"
+                    height="16"
+                    rx="4.5"
+                    fill="#0c0c12"
+                    stroke="rgba(255, 255, 255, 0.45)"
+                    strokeWidth="1.6"
+                  />
+                ) : (
+                  <rect
+                    x="-2"
+                    y="-6.5"
+                    width="4"
+                    height="13"
+                    rx="2"
+                    fill="#22222d"
+                    stroke="rgba(255, 255, 255, 0.25)"
+                    strokeWidth="1.2"
+                  />
+                )}
+              </g>
+            );
+          })}
+
+          {/* Central spine terminal anchor lock at bottom */}
+          <g transform="translate(270, 472)">
+            <circle
+              r="10"
+              fill="#120606"
+              stroke="#ff3b19"
+              strokeWidth="1.8"
+              className="filter drop-shadow-[0_0_8px_rgba(255,59,25,0.4)]"
+            />
+            <foreignObject x="-6" y="-6" width="12" height="12">
+              <div className="w-full h-full flex items-center justify-center text-[#ff3b19]">
+                <Lock size={9} strokeWidth={2.5} />
+              </div>
+            </foreignObject>
+          </g>
+        </g>
+
+        {/* ================= BRANCH CHAINS LAYER ================= */}
         {DEPENDENT_NODES.map((node) => {
           const isHovered = hoveredNode === node.id;
-          const chain = PRECOMPUTED_CHAINS[node.id];
+          const branch = PRECOMPUTED_BRANCHES[node.id];
+          const isLeft = node.x < 270;
+          const attachX = isLeft ? node.x + 26 : node.x - 26;
 
           return (
-            <g key={`chain-${node.id}`} className="transition-opacity duration-300">
-              {/* Underlying guide cable */}
+            <g key={`branch-${node.id}`} className="transition-opacity duration-300">
+              {/* Underlying branch guide cable */}
               <path
-                d={chain.pathD}
+                d={branch.pathD}
                 fill="none"
                 stroke={isHovered ? "#ff3b19" : "rgba(255, 255, 255, 0.12)"}
                 strokeWidth={isHovered ? 2.2 : 1}
@@ -164,76 +248,64 @@ export default function CeoChainIllustration() {
                 className="transition-all duration-300"
               />
 
-              {/* Individual 3D Interlocking Chain Links */}
-              {chain.links.map((link, lIdx) => {
+              {/* Individual Branch Chain Links */}
+              {branch.links.map((link, lIdx) => {
                 const isOdd = link.isOdd;
                 return (
                   <g
-                    key={`link-${node.id}-${lIdx}`}
+                    key={`branch-link-${node.id}-${lIdx}`}
                     transform={`translate(${link.x}, ${link.y}) rotate(${link.angle})`}
                   >
                     {isOdd ? (
-                      // Flat Link (facing viewer)
                       <rect
-                        x="-4.5"
-                        y="-7.5"
-                        width="9"
-                        height="15"
-                        rx="4.5"
+                        x="-4"
+                        y="-7"
+                        width="8"
+                        height="14"
+                        rx="4"
                         fill="#0c0c12"
-                        stroke={isHovered ? "#ff3b19" : "rgba(255, 255, 255, 0.4)"}
-                        strokeWidth="1.5"
+                        stroke={isHovered ? "#ff3b19" : "rgba(255, 255, 255, 0.38)"}
+                        strokeWidth="1.4"
                       />
                     ) : (
-                      // Edge-on Link (connector loop)
                       <rect
-                        x="-2"
-                        y="-6"
-                        width="4"
-                        height="12"
-                        rx="2"
+                        x="-1.8"
+                        y="-5.5"
+                        width="3.6"
+                        height="11"
+                        rx="1.8"
                         fill={isHovered ? "#ff3b19" : "#22222d"}
-                        stroke={isHovered ? "#ff5233" : "rgba(255, 255, 255, 0.22)"}
-                        strokeWidth="1.2"
+                        stroke={isHovered ? "#ff5233" : "rgba(255, 255, 255, 0.2)"}
+                        strokeWidth="1.1"
                       />
                     )}
                   </g>
                 );
               })}
 
-              {/* Top Anchor Shackle at CEO connection point */}
+              {/* Anchor Eyelet at node connection edge */}
               <circle
-                cx={CEO_NODE.x}
-                cy={CEO_NODE.y + 24}
-                r="3"
-                fill="#ff3b19"
-                stroke="#000"
-                strokeWidth="1"
-              />
-
-              {/* Bottom Anchor Eyelet at dependent node top */}
-              <circle
-                cx={node.x}
-                cy={node.y - 24}
+                cx={attachX}
+                cy={node.y}
                 r="3"
                 fill={isHovered ? "#ff3b19" : "#ffffff"}
                 stroke="#000"
                 strokeWidth="1"
               />
 
-              {/* Constant Red Signal Pulse traversing down from CEO to each node (takes 1.5s) */}
+              {/* Constant Red Signal Pulse: Traversing down the spine and branching to this node (1.5s) */}
               <circle r="4" fill="#ff3b19" filter="url(#crimson-pulse-glow)">
                 <animateMotion
-                  path={chain.pathD}
-                  dur="1.5s"
+                  path={branch.fullPulsePath}
+                  dur="1.6s"
                   repeatCount="indefinite"
                   rotate="auto"
                 />
               </circle>
               <circle r="7" fill="#ff3b19" opacity="0.4">
                 <animateMotion
-                  path={chain.pathD}
-                  dur="1.5s"
+                  path={branch.fullPulsePath}
+                  dur="1.6s"
                   repeatCount="indefinite"
                   rotate="auto"
                 />
@@ -241,6 +313,21 @@ export default function CeoChainIllustration() {
             </g>
           );
         })}
+
+        {/* ================= JUNCTION DISTRIBUTION RINGS ================= */}
+        {JUNCTIONS.map((j) => (
+          <g key={`junction-${j.id}`} transform={`translate(270, ${j.y})`}>
+            {/* Heavy steel shackle hub ring */}
+            <circle
+              r="6.5"
+              fill="#120808"
+              stroke="#ff3b19"
+              strokeWidth="2"
+              className="filter drop-shadow-[0_0_6px_rgba(255,59,25,0.45)]"
+            />
+            <circle r="2.5" fill="#ffffff" />
+          </g>
+        ))}
 
         {/* ================= CEO APEX NODE ================= */}
         <g
@@ -278,6 +365,16 @@ export default function CeoChainIllustration() {
             </div>
           </foreignObject>
 
+          {/* Shackle connection ring at base of CEO node */}
+          <circle
+            cx="0"
+            cy="26"
+            r="4"
+            fill="#ff3b19"
+            stroke="#000"
+            strokeWidth="1"
+          />
+
           {/* Pill Badge Tag Below */}
           <g transform="translate(0, 44)">
             <rect
@@ -308,6 +405,7 @@ export default function CeoChainIllustration() {
         {DEPENDENT_NODES.map((node) => {
           const isHovered = hoveredNode === node.id;
           const Icon = node.icon;
+          const isLeft = node.x < 270;
 
           return (
             <g
@@ -330,10 +428,10 @@ export default function CeoChainIllustration() {
                 }}
               />
 
-              {/* Eyelet hook at top */}
+              {/* Eyelet hook on the inner side toward the central spine */}
               <rect
-                x="-3"
-                y="-27"
+                x={isLeft ? "23" : "-29"}
+                y="-3"
                 width="6"
                 height="6"
                 rx="2"
@@ -399,7 +497,7 @@ export default function CeoChainIllustration() {
       {/* Subtitle status pill at bottom */}
       <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-mono text-white/50 uppercase tracking-widest">
         <Lock size={11} className="text-[#ff3b19]" />
-        <span>Single Point of Failure // All Directives Sever Upon Silence</span>
+        <span>Central Spine Network // All Directives Sever Upon Silence</span>
       </div>
     </div>
   );
