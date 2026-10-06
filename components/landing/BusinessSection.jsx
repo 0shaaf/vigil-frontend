@@ -34,8 +34,8 @@ export default function BusinessSection() {
           {/* Right Part: Current Content, Problem Statement & Safeguard Cards */}
           <div className="lg:col-span-6 flex flex-col justify-center text-left">
             <h2 className="font-['Space_Grotesk'] text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
-              The company&apos;s master keys live in your head. <br />
-              <span className="text-[#ff3b19]">What if you vanish tomorrow?</span>
+              What happens to your business <br />
+              <span className="text-[#ff3b19]">AFTER YOU?</span>
             </h2>
 
             <p className="mt-6 text-base sm:text-lg text-white/75 font-normal leading-relaxed">
