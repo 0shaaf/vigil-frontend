@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Users, ArrowRight, FolderLock } from "lucide-react";
+import CeoChainIllustration from "@/components/landing/CeoChainIllustration";
 
 export default function BusinessSection() {
   return (
@@ -22,57 +23,68 @@ export default function BusinessSection() {
         <div className="absolute inset-0 backdrop-blur-[5px] bg-[#07070a]/45 pointer-events-none" />
       </div>
 
-      {/* Foreground Content: Prominently centered with high-legibility glassmorphic cards */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-        <h2 className="font-['Space_Grotesk'] text-2xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
-          The company&apos;s master keys live in your head. <br />
-          <span className="text-[#ff3b19]">What if you vanish tomorrow?</span>
-        </h2>
-
-        <p className="mt-5 sm:mt-6 text-sm sm:text-base lg:text-lg text-white/75 font-normal leading-relaxed max-w-2xl mx-auto">
-          Founders and key executives are often the sole custodians of essential corporate intelligence: bank signing powers, cloud root keys, cap table records, and emergency handover directives. If an unforeseen accident occurs, companies freeze.
-        </p>
-
-        {/* 2 Safeguard Feature Cards */}
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto text-left">
-          <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 backdrop-blur-md border border-white/10 flex items-start gap-4 hover:border-white/25 transition-all hover:bg-[#0a0a0f]/95 shadow-xl shadow-black/50">
-            <div className="w-10 h-10 rounded-lg bg-[#ff3b19]/20 text-[#ff3b19] flex items-center justify-center shrink-0">
-              <FolderLock size={20} />
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold text-white">Automated Drive &amp; Document Release</h4>
-              <p className="text-xs text-white/60 mt-1 leading-relaxed">
-                Store sensitive files in your Google Drive or secure vault. Vigil only shares access with your co-founders if you fail to check in.
-              </p>
-            </div>
+      {/* Main Content: Split into Left (Illustration) and Right (Copy & Cards) */}
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-center">
+          {/* Left Part: Chained CEO & Hanging Dependencies Illustration */}
+          <div className="lg:col-span-6 flex justify-center items-center w-full">
+            <CeoChainIllustration />
           </div>
 
-          <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 backdrop-blur-md border border-white/10 flex items-start gap-4 hover:border-white/25 transition-all hover:bg-[#0a0a0f]/95 shadow-xl shadow-black/50">
-            <div className="w-10 h-10 rounded-lg bg-[#ff3b19]/20 text-[#ff3b19] flex items-center justify-center shrink-0">
-              <Users size={20} />
+          {/* Right Part: Current Content, Problem Statement & Safeguard Cards */}
+          <div className="lg:col-span-6 flex flex-col justify-center text-left">
+            <h2 className="font-['Space_Grotesk'] text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
+              The company&apos;s master keys live in your head. <br />
+              <span className="text-[#ff3b19]">What if you vanish tomorrow?</span>
+            </h2>
+
+            <p className="mt-6 text-base sm:text-lg text-white/75 font-normal leading-relaxed">
+              Founders and key executives are often the sole custodians of essential corporate intelligence: bank signing powers, cloud root keys, cap table records, and emergency handover directives. If an unforeseen accident occurs, companies freeze.
+            </p>
+
+            {/* Safeguard Feature Cards */}
+            <div className="mt-8 space-y-4">
+              <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 backdrop-blur-md border border-white/10 flex items-start gap-4 hover:border-white/25 transition-all hover:bg-[#0a0a0f]/95 shadow-xl shadow-black/50">
+                <div className="w-10 h-10 rounded-lg bg-[#ff3b19]/20 text-[#ff3b19] flex items-center justify-center shrink-0">
+                  <FolderLock size={20} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-white">Automated Drive &amp; Document Release</h4>
+                  <p className="text-xs text-white/60 mt-1 leading-relaxed">
+                    Store sensitive files in your Google Drive or secure vault. Vigil only shares access with your co-founders if you fail to check in.
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#0a0a0f]/80 backdrop-blur-md border border-white/10 flex items-start gap-4 hover:border-white/25 transition-all hover:bg-[#0a0a0f]/95 shadow-xl shadow-black/50">
+                <div className="w-10 h-10 rounded-lg bg-[#ff3b19]/20 text-[#ff3b19] flex items-center justify-center shrink-0">
+                  <Users size={20} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-white">Tiered Recipient Routing</h4>
+                  <p className="text-xs text-white/60 mt-1 leading-relaxed">
+                    Deliver technical passwords to the CTO, legal agreements to corporate counsel, and financial keys strictly to the Board.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-semibold text-white">Tiered Recipient Routing</h4>
-              <p className="text-xs text-white/60 mt-1 leading-relaxed">
-                Deliver technical passwords to the CTO, legal agreements to corporate counsel, and financial keys strictly to the Board.
-              </p>
+
+            {/* Action Link */}
+            <div className="mt-8">
+              <a
+                href="#actions"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-[#ff3b19] hover:text-[#ff5233] transition-colors"
+              >
+                <span>Safeguard your business continuity</span>
+                <ArrowRight size={15} />
+              </a>
             </div>
           </div>
-        </div>
-
-        {/* Action Link */}
-        <div className="mt-10">
-          <a
-            href="#actions"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-[#ff3b19] hover:text-[#ff5233] transition-colors"
-          >
-            <span>Safeguard your business continuity</span>
-            <ArrowRight size={15} />
-          </a>
         </div>
       </div>
     </section>
   );
 }
+
 
 
