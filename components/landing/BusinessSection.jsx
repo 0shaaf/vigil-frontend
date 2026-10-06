@@ -1,9 +1,34 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Users, ArrowRight, FolderLock } from "lucide-react";
 
 export default function BusinessSection() {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.15,
+        rootMargin: "-20px 0px -20px 0px",
+      }
+    );
+
+    const currentEl = sectionRef.current;
+    if (currentEl) {
+      observer.observe(currentEl);
+    }
+
+    return () => {
+      if (currentEl) observer.unobserve(currentEl);
+    };
+  }, []);
+
   // Track mouse per individual card for dynamic specular gloss identical to Section 2
   const handleCardMouseMove = (e) => {
     const card = e.currentTarget;
@@ -15,16 +40,31 @@ export default function BusinessSection() {
   };
 
   return (
-    <section id="business" className="relative py-24 sm:py-28 lg:py-32 bg-[#07070a] text-white border-t border-white/10 overflow-hidden">
+    <section
+      id="business"
+      ref={sectionRef}
+      className="relative py-24 sm:py-28 lg:py-32 bg-[#07070a] text-white border-t border-white/10 overflow-hidden"
+    >
       {/* Subtle ambient abyss glow */}
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[#ff3b19]/8 rounded-full blur-[180px] pointer-events-none" />
+      <div
+        className={`absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[#ff3b19]/8 rounded-full blur-[180px] pointer-events-none transition-opacity duration-[1200ms] ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
+      />
 
       {/* Main Content Layout */}
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20 xl:gap-28 items-center">
           
-          {/* Left Area: Problem Statement, Description, Compact Shiny Glass Cards & CTA */}
-          <div className="lg:col-span-5 xl:col-span-5 flex flex-col justify-center text-left">
+          {/* Left Area: Fades in from the left edge */}
+          <div
+            className={`lg:col-span-5 xl:col-span-5 flex flex-col justify-center text-left transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isVisible
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-16 sm:-translate-x-24 pointer-events-none"
+            }`}
+            style={{ transitionDelay: isVisible ? "80ms" : "0ms" }}
+          >
             <h2 className="font-['Space_Grotesk'] text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
               What happens to your business <br />
               <span className="text-[#ff3b19]">AFTER YOU?</span>
@@ -87,8 +127,15 @@ export default function BusinessSection() {
             </div>
           </div>
 
-          {/* Right Area: Spanning 70-80% Section Height with Left Origin & Excess Cut Off Screen Edge */}
-          <div className="lg:col-span-7 xl:col-span-7 relative flex items-center justify-start w-full">
+          {/* Right Area: Fades in from the right edge */}
+          <div
+            className={`lg:col-span-7 xl:col-span-7 relative flex items-center justify-start w-full transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isVisible
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-16 sm:translate-x-24 pointer-events-none"
+            }`}
+            style={{ transitionDelay: isVisible ? "160ms" : "0ms" }}
+          >
             <div className="relative w-full lg:w-[130%] xl:w-[145%] max-w-none h-[340px] sm:h-[420px] lg:h-[500px] xl:h-[560px] origin-left">
               <Image
                 src="/assets/sec4.jpeg"
